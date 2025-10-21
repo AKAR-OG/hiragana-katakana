@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hiragana & Katakana TTS</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #111;
+  color: white;
+}
+.container {
+  flex: 1;
+  display: flex;
+}
+.half {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+}
+.left { background: #1a1a2e; }
+.right { background: #16213e; }
+h2 { margin-bottom: 10px; }
+table {
+  border-collapse: collapse;
+  margin: 10px;
+}
+td {
+  border: 1px solid #444;
+  text-align: center;
+  padding: 10px 15px;
+  font-size: 26px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+td:hover {
+  background: #0f3460;
+  transform: scale(1.1);
+}
+small {
+  display: block;
+  font-size: 14px;
+  opacity: 0.7;
+}
+/* Tips section */
+.tips {
+  padding: 20px;
+  background: #0b0b1a;
+  border-top: 2px solid #444;
+}
+.tips h3 {
+  margin-top: 0;
+}
+.tips ul {
+  margin: 10px 0 0 20px;
+}
+.tips li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+  font-size: 15px;
+  opacity: 0.9;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Hiragana -->
+  <div class="half left">
+    <h2>Hiragana</h2>
+    <table id="hiraganaTable"></table>
+  </div>
+
+  <!-- Katakana -->
+  <div class="half right">
+    <h2>Katakana</h2>
+    <table id="katakanaTable"></table>
+  </div>
+</div>
+
+<!-- Tips section -->
+<div class="tips">
+  <h3>💡 Tips for Learning Japanese</h3>
+  <ul>
+    <li>Practice writing Hiragana and Katakana daily to memorize shapes.</li>
+    <li>Use flashcards or apps to match kana with sounds.</li>
+    <li>Listen to native pronunciation to improve your accent.</li>
+    <li>Learn simple words and read children’s books in Japanese.</li>
+    <li>Practice speaking out loud every day, even a few minutes.</li>
+    <li>Try associating kana with images or mnemonic tricks.</li>
+  </ul>
+</div>
+
+<script>
+// Kana + Romaji data
+const kanaData = [
+  ['a','あ','ア'], ['i','い','イ'], ['u','う','ウ'], ['e','え','エ'], ['o','お','オ'],
+  ['ka','か','カ'], ['ki','き','キ'], ['ku','く','ク'], ['ke','け','ケ'], ['ko','こ','コ'],
+  ['sa','さ','サ'], ['shi','し','シ'], ['su','す','ス'], ['se','せ','セ'], ['so','そ','ソ'],
+  ['ta','た','タ'], ['chi','ち','チ'], ['tsu','つ','ツ'], ['te','て','テ'], ['to','と','ト'],
+  ['na','な','ナ'], ['ni','に','ニ'], ['nu','ぬ','ヌ'], ['ne','ね','ネ'], ['no','の','ノ'],
+  ['ha','は','ハ'], ['hi','ひ','ヒ'], ['fu','ふ','フ'], ['he','へ','ヘ'], ['ho','ほ','ホ'],
+  ['ma','ま','マ'], ['mi','み','ミ'], ['mu','む','ム'], ['me','め','メ'], ['mo','も','モ'],
+  ['ya','や','ヤ'], ['yu','ゆ','ユ'], ['yo','よ','ヨ'],
+  ['ra','ら','ラ'], ['ri','り','リ'], ['ru','る','ル'], ['re','れ','レ'], ['ro','ろ','ロ'],
+  ['wa','わ','ワ'], ['wo','を','ヲ'], ['n','ん','ン']
+];
+
+// Build tables
+function buildTable(tableId, kanaIndex) {
+  const table = document.getElementById(tableId);
+  let row;
+  kanaData.forEach((item, i) => {
+    if(i % 5 === 0) row = table.insertRow();
+    const cell = row.insertCell();
+    cell.innerHTML = `${item[kanaIndex]}<small>${item[0]}</small>`;
+    cell.addEventListener('click', () => speak(item[0]));
+  });
+}
+
+buildTable('hiraganaTable',1);
+buildTable('katakanaTable',2);
+
+// TTS function
+function speak(text) {
+  if('speechSynthesis' in window) {
+    const utter = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    const jaVoice = voices.find(v => v.lang.includes('ja'));
+    if(jaVoice) utter.voice = jaVoice;
+    utter.rate = 0.8;
+    utter.pitch = 1.1;
+    window.speechSynthesis.speak(utter);
+  } else {
+    alert('Your browser does not support speech synthesis.');
+  }
+}
+</script>
+
+</body>
+</html>
